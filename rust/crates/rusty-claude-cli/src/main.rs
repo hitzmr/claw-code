@@ -6741,17 +6741,7 @@ impl AnthropicRuntimeClient {
                 ApiProviderClient::Anthropic(inner)
             }
             ProviderKind::Xai | ProviderKind::OpenAi => {
-                // The api crate's `ProviderClient::from_model_with_anthropic_auth`
-                // with `None` for the anthropic auth routes via
-                // `detect_provider_kind` and builds an
-                // `OpenAiCompatClient::from_env` with the matching
-                // `OpenAiCompatConfig` (openai / xai / dashscope).
-                // That reads the correct API-key env var and BASE_URL
-                // override internally, so this one call covers OpenAI,
-                // OpenRouter, xAI, DashScope, Ollama, and any other
-                // OpenAI-compat endpoint users configure via
-                // `OPENAI_BASE_URL` / `XAI_BASE_URL` / `DASHSCOPE_BASE_URL`.
-                ApiProviderClient::from_model_with_anthropic_auth(&resolved_model, None)?
+                ApiProviderClient::from_model(&resolved_model)?
             }
         };
         Ok(Self {
