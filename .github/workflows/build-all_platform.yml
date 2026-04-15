@@ -1,0 +1,39 @@
+name: Build Claw All Platforms
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux
+            artifact: rust/target/debug/claw
+          - os: windows-latest
+            name: windows
+            artifact: rust/target/debug/claw.exe
+          - os: macos-latest
+            name: macos
+            artifact: rust/target/debug/claw
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 官方自带 Rust，无需手动安装！
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: |
+          cd rust
+          cargo build --workspace
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: claw-${{ matrix.name }}
+          path: ${{ matrix.artifact }}
